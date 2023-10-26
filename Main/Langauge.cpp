@@ -7,19 +7,42 @@
 
 using String = const char*;
 
+/*
+*
+*
+*  CONSTS and FUNCTIONS
+*
+*
+*/
+
 
 template<typename LengthFigure>
 inline int ArrayLength(LengthFigure Text) { return (int) std::floor( sizeof(Text) / sizeof(LengthFigure));}
+
+const char DIGHTS[] = "0123456789";
+bool CharacterANumber(char Character) {
+	for (char CharacterPicked : DIGHTS) {
+		if (CharacterPicked == Character) {
+			return true;
+		}
+	}
+	return false;
+}
+
+
 
 /*
 * 
 * 
 * TOKEN SYSTEM
 * 
-
+*
 */
 
- ;
+
+
+
+
 enum TokenType
 {
 	_NULL   =  0,
@@ -35,27 +58,28 @@ enum TokenType
 
 
 
+
 struct Token {
 	TokenType Type;
-	std::stringstream Value;
-
-	void Write(TokenType ValueType, String SetValue= "\0") {
+	String Value;
+	Token(TokenType ValueType = _NULL, String SetValue= "\0") {
 		this->Type = ValueType;
-		this->Value << SetValue;
+		this->Value = SetValue;
 	};
 
-	/*
+	
 	template<class ReturnType>
 	ReturnType GetValue() {
 		ReturnType ReturnValue;
-        this->Value >> ReturnValue;
+		std::stringstream SS(this->Value);
+		SS >> ReturnValue;
 		return ReturnValue;
 	};
-	*/
+	
 
 };
-
 using TokensVector = std::vector<Token>;
+
 
 
 
@@ -79,6 +103,11 @@ class Lexer
 		this->CurrentCharacter = (this->Text[Position] > ArrayLength<String>(this->Text) ? this->Text[Position] : '\0');
 	}
 
+	Token MakeNumberToken() {
+		String Number;
+
+	}
+
 	TokensVector MakeTokens() {
 		TokensVector TokensStored;
 
@@ -86,8 +115,14 @@ class Lexer
 		while (this->CurrentCharacter != '\0')
 			
 		{
-			Token T;
+			
 			TokenType D;
+			switch (CharacterANumber(this->CurrentCharacter))
+			{
+			case true:
+
+			}
+
 			switch (this->CurrentCharacter)
 			{
 			case ' \t':
@@ -96,7 +131,7 @@ class Lexer
 			case '+':
 			{
 				D = PLUS;
-				T.Write(D);
+				Token T(D);
 				TokensStored.push_back(T);
 				this->Advance();
 				break;
@@ -104,7 +139,7 @@ class Lexer
 			case '-':
 			{
 				D = MINUS;
-				T.Write(D);
+				Token T(D);
 				TokensStored.push_back(T);
 				this->Advance();
 				break;
@@ -112,7 +147,7 @@ class Lexer
 			case '/':
 			{
 				D = DIV;
-				T.Write(D);
+				Token T(D);
 				TokensStored.push_back(T);
 				this->Advance();
 				break;
@@ -120,7 +155,7 @@ class Lexer
 			case '*':
 			{
 				D = MUL;
-				T.Write(D);
+				Token T(D);
 				TokensStored.push_back(T);
 				this->Advance();
 				break;
@@ -128,7 +163,7 @@ class Lexer
 			case '(':
 			{
 				D = LPAREN;
-				T.Write(D);
+				Token T(D);
 				TokensStored.push_back(T);
 				this->Advance();
 				break;
@@ -136,7 +171,7 @@ class Lexer
 			case ')':
 			{
 				D = RLPAREN;
-				T.Write(D);
+				Token T(D);
 				TokensStored.push_back(T);
 				this->Advance();
 				break;
