@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <cmath>
+#include <vector>
 
 #define WARN_IF_ERR(F,M) try { F; } catch { std::cout << "Interputer Error: " << M <<"." << std::endl; }
 
@@ -38,19 +39,25 @@ struct Token {
 	TokenType Type;
 	std::stringstream Value;
 
-	Token(TokenType ValueType, String SetValue) : Type(ValueType) {
+	void Write(TokenType ValueType, String SetValue= "\0") {
+		this->Type = ValueType;
 		this->Value << SetValue;
 	};
 
+	/*
 	template<class ReturnType>
 	ReturnType GetValue() {
 		ReturnType ReturnValue;
         this->Value >> ReturnValue;
 		return ReturnValue;
 	};
+	*/
 
 };
-+
+
+using TokensVector = std::vector<Token>;
+
+
 
 
 /*
@@ -69,7 +76,77 @@ class Lexer
 
 	void Advance() {
 		this->Position++;
-		this->CurrentCharacter = (this->Text[Position] > ArrayLength<String>(this->Text) ? this->Text[Position] : '/0');
+		this->CurrentCharacter = (this->Text[Position] > ArrayLength<String>(this->Text) ? this->Text[Position] : '\0');
+	}
+
+	TokensVector MakeTokens() {
+		TokensVector TokensStored;
+
+
+		while (this->CurrentCharacter != '\0')
+			
+		{
+			Token T;
+			TokenType D;
+			switch (this->CurrentCharacter)
+			{
+			case ' \t':
+				this->Advance();
+				break;
+			case '+':
+			{
+				D = PLUS;
+				T.Write(D);
+				TokensStored.push_back(T);
+				this->Advance();
+				break;
+			};
+			case '-':
+			{
+				D = MINUS;
+				T.Write(D);
+				TokensStored.push_back(T);
+				this->Advance();
+				break;
+			};
+			case '/':
+			{
+				D = DIV;
+				T.Write(D);
+				TokensStored.push_back(T);
+				this->Advance();
+				break;
+			};
+			case '*':
+			{
+				D = MUL;
+				T.Write(D);
+				TokensStored.push_back(T);
+				this->Advance();
+				break;
+			};
+			case '(':
+			{
+				D = LPAREN;
+				T.Write(D);
+				TokensStored.push_back(T);
+				this->Advance();
+				break;
+			};
+			case ')':
+			{
+				D = RLPAREN;
+				T.Write(D);
+				TokensStored.push_back(T);
+				this->Advance();
+				break;
+			};
+			}
+		}
+
+
+		return TokensStored;
+
 	}
 
 public:
